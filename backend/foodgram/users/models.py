@@ -4,7 +4,10 @@ from django.db import models
 
 class User(AbstractUser):
     """Custom user model."""
-    is_subscribed = models.BooleanField(default=False)
+    is_subscribed = models.BooleanField(
+        'подписан',
+        default=False
+    )
 
 
 class Follow(models.Model):
@@ -19,3 +22,10 @@ class Follow(models.Model):
                                related_name='following',
                                verbose_name='Автор'
                                )
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+
+    def __str__(self):
+        return f'{self.user}/{self.author}'

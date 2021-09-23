@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'recipes',
+    'ingredients',
+    'tags',
 ]
 
 MIDDLEWARE = [
@@ -94,7 +96,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
