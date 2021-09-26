@@ -1,22 +1,21 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
 from .models import Follow, User
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(UserAdmin):
     list_display = (
         'pk',
         'email',
         'username',
-        'password',
         'first_name',
         'last_name',
         'is_subscribed',
         'is_active',
         'is_staff',
     )
-    list_editable = ('password',)
     search_fields = ('email', 'username',)
     list_filter = ('email', 'username',)
     empty_value_display = '-пусто-'

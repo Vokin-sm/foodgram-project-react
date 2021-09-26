@@ -4,6 +4,18 @@ from django.db import models
 
 class User(AbstractUser):
     """Custom user model."""
+    email = models.EmailField(
+        'почта',
+        unique=True,
+    )
+    first_name = models.CharField(
+        'имя',
+        max_length=150
+    )
+    last_name = models.CharField(
+        'фамилия',
+        max_length=150
+    )
     is_subscribed = models.BooleanField(
         'подписан',
         default=False
