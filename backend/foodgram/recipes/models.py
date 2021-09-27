@@ -17,9 +17,9 @@ class Recipe(models.Model):
         related_name='recipe',
         verbose_name='тег',
     )
-    image = models.FileField(
+    image = models.ImageField(
         'изображение',
-        upload_to='recipes/media'
+        upload_to='recipes/%Y/%m/%d/',
     )
     name = models.CharField(
         'имя',
