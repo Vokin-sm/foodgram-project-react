@@ -2,6 +2,7 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 
 
 class CustomUserSerializer(UserSerializer):
+    """Is used to serialize users."""
     class Meta(UserSerializer.Meta):
         fields = [
             'email',
@@ -14,6 +15,7 @@ class CustomUserSerializer(UserSerializer):
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
+    """Is used to serialize users."""
     class Meta(UserCreateSerializer.Meta):
         fields = [
             'email',
