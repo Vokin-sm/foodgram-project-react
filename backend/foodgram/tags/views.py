@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 
 from tags.models import Tag
-from tags.seriallizers import TagsSerializer
+from tags.serializers import TagsSerializer
 
 
 class TagViewSet(mixins.ListModelMixin,

@@ -2,16 +2,21 @@ import base64
 
 from rest_framework import serializers
 
+from ingredients.serializers import IngredientsSerializer
 from recipes.models import Recipe
+from tags.serializers import TagsSerializer
+from users.serializers import CustomUserSerializer
 
 
 class Base64Field(serializers.Field):
     """Base64 encodes and decodes."""
+
     def to_representation(self, value):
-        image_file = value.open('rb')
-        image_bytes = image_file.read()
-        value.close()
-        return base64.encodebytes(image_bytes)
+        # image_file = value.open('rb')
+        # image_bytes = image_file.read()
+        # value.close()
+        # return base64.encodebytes(image_bytes)
+        return value.url
 
     def to_internal_value(self, data):
         image_bytes = base64.decodebytes(data)
@@ -24,6 +29,15 @@ class Base64Field(serializers.Field):
 class RecipesSerializer(serializers.ModelSerializer):
     """Is used to serialize recipes."""
     image = Base64Field()
+    tags = TagsSerializer(
+        many=True,
+        read_only=True,
+    )
+    author = CustomUserSerializer(read_only=True)
+    ingredients = IngredientsSerializer(
+        many=True,
+        read_only=True,
+    )
 
     class Meta:
         model = Recipe
