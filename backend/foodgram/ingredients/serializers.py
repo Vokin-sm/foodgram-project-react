@@ -1,14 +1,20 @@
 from rest_framework import serializers
 
-from ingredients.models import Ingredient
+from .models import Component
 
 
-class IngredientsSerializer(serializers.ModelSerializer):
-    """Is used to serialize ingredients."""
+class ComponentSerializer(serializers.ModelSerializer):
+    """Is used to serialize components."""
+    name = serializers.SlugRelatedField(
+        slug_field='name',
+        read_only=True,
+    )
+
     class Meta:
-        model = Ingredient
+        model = Component
         fields = [
             'id',
             'name',
             'measurement_unit',
+            'amount',
         ]

@@ -2,10 +2,11 @@ import base64
 
 from rest_framework import serializers
 
-from ingredients.serializers import IngredientsSerializer
-from recipes.models import Recipe
+from ingredients.serializers import ComponentSerializer
 from tags.serializers import TagsSerializer
 from users.serializers import CustomUserSerializer
+
+from .models import Recipe
 
 
 class Base64Field(serializers.Field):
@@ -31,12 +32,10 @@ class RecipesSerializer(serializers.ModelSerializer):
     image = Base64Field()
     tags = TagsSerializer(
         many=True,
-        read_only=True,
     )
     author = CustomUserSerializer(read_only=True)
-    ingredients = IngredientsSerializer(
+    ingredients = ComponentSerializer(
         many=True,
-        read_only=True,
     )
 
     class Meta:

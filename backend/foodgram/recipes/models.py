@@ -1,6 +1,6 @@
 from django.db import models
 
-from ingredients.models import Ingredient
+from ingredients.models import Component
 from tags.models import Tag
 from users.models import User
 
@@ -8,9 +8,9 @@ from users.models import User
 class Recipe(models.Model):
     """The Recipe model is needed to create recipe."""
     ingredients = models.ManyToManyField(
-        Ingredient,
+        Component,
         related_name='recipe',
-        verbose_name='ингредиент',
+        verbose_name='ингредиенты',
     )
     tags = models.ManyToManyField(
         Tag,
