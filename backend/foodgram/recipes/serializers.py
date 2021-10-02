@@ -33,6 +33,23 @@ class RecipesListSerializer(serializers.ModelSerializer):
         ]
 
 
+def tags_and_components_add(obj, tags_data, components_data):
+    """Adds tags and components to an object."""
+    for tag_data in tags_data:
+        obj.tags.add(tag_data)
+    for component_data in components_data:
+        ingredient = Ingredient.objects.get(
+            id=component_data['name']['id']
+        )
+        component = Component.objects.create(
+            amount=component_data['amount'],
+            name=ingredient,
+        )
+        obj.ingredients.add(component)
+    obj.save()
+    return obj
+
+
 class RecipesCreateSerializer(serializers.ModelSerializer):
     """Used to serialize recipe creation."""
     image = Base64ImageField()
@@ -52,18 +69,14 @@ class RecipesCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         tags_data = validated_data.pop('tags')
         components_data = validated_data.pop('ingredients')
-        print(tags_data)
-        print(components_data)
-        print(validated_data)
         recipe = Recipe.objects.create(**validated_data)
-        for tag_data in tags_data:
-            recipe.tags.add(tag_data)
-        for component_data in components_data:
-            ingredient = Ingredient.objects.get(id=component_data['amount'])
-            component = Component.objects.create(
-                amount=component_data['amount'],
-                name=ingredient,
-            )
-            recipe.ingredients.add(component)
-        recipe.save()
-        return recipe
+        return tags_and_components_add(recipe, tags_data, components_data)
+
+    def update(self, instance, validated_data):
+        tags_data = validated_data.pop('tags')
+        instance.tags.clear()
+        components_data = validated_data.pop('ingredients')
+        Component.objects.filter(recipe=instance).delete()
+        for update_data in validated_data:
+            setattr(instance, update_data, validated_data[update_data])
+        return tags_and_components_add(instance, tags_data, components_data)

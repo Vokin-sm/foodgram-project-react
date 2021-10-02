@@ -24,7 +24,7 @@ class ComponentListSerializer(serializers.ModelSerializer):
 
 class ComponentCreateSerializer(serializers.ModelSerializer):
     """Used to serialize component creation."""
-    id = serializers.ReadOnlyField(source='name.id')
+    id = serializers.SlugField(source='name.id')
 
     class Meta:
         model = Component

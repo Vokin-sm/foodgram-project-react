@@ -10,7 +10,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Component,
         related_name='recipe',
-        verbose_name='ингредиенты',
+        verbose_name='компоненты',
     )
     tags = models.ManyToManyField(
         Tag,
