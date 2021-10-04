@@ -16,10 +16,6 @@ class User(AbstractUser):
         'фамилия',
         max_length=150
     )
-    is_subscribed = models.BooleanField(
-        'подписан',
-        default=False
-    )
 
 
 class Follow(models.Model):

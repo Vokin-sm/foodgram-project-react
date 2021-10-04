@@ -7,7 +7,7 @@ from ingredients.serializers import (ComponentCreateSerializer,
 from tags.serializers import TagsSerializer
 from users.serializers import CustomUserSerializer
 
-from .models import Recipe
+from .models import Favorites, Recipe, ShoppingList
 
 
 class RecipesListSerializer(serializers.ModelSerializer):
@@ -16,6 +16,8 @@ class RecipesListSerializer(serializers.ModelSerializer):
     tags = TagsSerializer(many=True)
     author = CustomUserSerializer(read_only=True)
     ingredients = ComponentListSerializer(many=True)
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -31,6 +33,26 @@ class RecipesListSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time',
         ]
+
+    def get_is_favorited(self, obj):
+        if self.context['request'].auth:
+            current_user = self.context['request'].user
+            try:
+                Favorites.objects.get(recipe=obj, author=current_user)
+            except Favorites.DoesNotExist:
+                return False
+            return True
+        return False
+
+    def get_is_in_shopping_cart(self, obj):
+        if self.context['request'].auth:
+            current_user = self.context['request'].user
+            try:
+                ShoppingList.objects.get(recipe=obj, author=current_user)
+            except ShoppingList.DoesNotExist:
+                return False
+            return True
+        return False
 
 
 def tags_and_components_add(obj, tags_data, components_data):
@@ -80,3 +102,20 @@ class RecipesCreateSerializer(serializers.ModelSerializer):
         for update_data in validated_data:
             setattr(instance, update_data, validated_data[update_data])
         return tags_and_components_add(instance, tags_data, components_data)
+
+
+class ShoppingCartFavoriteSerializer(serializers.ModelSerializer):
+    """Used to serialize shopping carts and favorite."""
+    id = serializers.SlugField(source='recipe.id')
+    name = serializers.SlugField(source='recipe.name')
+    image = Base64ImageField(source='recipe.image')
+    cooking_time = serializers.SlugField(source='recipe.cooking_time')
+
+    class Meta:
+        model = ShoppingList
+        fields = [
+            'id',
+            'name',
+            'image',
+            'cooking_time',
+        ]

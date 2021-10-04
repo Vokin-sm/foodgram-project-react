@@ -33,14 +33,6 @@ class Recipe(models.Model):
         related_name='recipe',
         verbose_name='автор',
     )
-    is_favorited = models.BooleanField(
-        'в избранном',
-        default=False
-    )
-    is_in_shopping_cart = models.BooleanField(
-        'в списке покупок',
-        default=False
-    )
 
     class Meta:
         verbose_name = 'Рецепт'

@@ -1,16 +1,22 @@
 from collections import namedtuple
 
 from django.http import HttpResponse
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from ingredients.models import Component
-from recipes.filters import RecipeFilter
-from recipes.models import Recipe, ShoppingList
-from recipes.paginations import RecipeListPagination
-from recipes.permissions import IsOwner
-from recipes.serializers import RecipesCreateSerializer, RecipesListSerializer
+
+from .filters import RecipeFilter
+from .models import Favorites, Recipe, ShoppingList
+from .paginations import RecipeListPagination
+from .permissions import IsOwner
+from .serializers import (RecipesCreateSerializer,
+                          RecipesListSerializer,
+                          ShoppingCartFavoriteSerializer)
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
@@ -69,3 +75,96 @@ def download_shopping_cart(request):
 
     with open('static/shopping_carts/shopping_cart.txt') as shopping_cart:
         return HttpResponse(shopping_cart, content_type='text/plain')
+
+
+class ShoppingCartsFavorite(APIView):
+    """Adding and removing recipes and favorite."""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, recipe_id, model):
+        if model not in ('shopping_cart', 'favorite'):
+            context = {'error': 'Страница не найдена'}
+            return Response(
+                data=context,
+                status=status.HTTP_404_NOT_FOUND
+            )
+        recipe = get_object_or_404(
+            Recipe,
+            id=recipe_id
+        )
+        if model == 'shopping_cart':
+            try:
+                ShoppingList.objects.get(
+                    author=request.user,
+                    recipe=recipe_id
+                )
+            except ShoppingList.DoesNotExist:
+                shopping_cart = ShoppingList.objects.create(
+                    author=request.user,
+                    recipe=recipe
+                )
+                serializer = ShoppingCartFavoriteSerializer(shopping_cart)
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_201_CREATED
+                )
+            context = {'error': 'Такой рецепт в списке покупок уже существует'}
+            return Response(
+                data=context,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+            Favorites.objects.get(
+                author=request.user,
+                recipe=recipe_id
+            )
+        except Favorites.DoesNotExist:
+            favorite = Favorites.objects.create(
+                author=request.user,
+                recipe=recipe
+            )
+            serializer = ShoppingCartFavoriteSerializer(favorite)
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+        context = {'error': 'Такой рецепт в списке избранное уже существует'}
+        return Response(
+            data=context,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def delete(self, request, recipe_id, model):
+        if model not in ('shopping_cart', 'favorite'):
+            context = {'error': 'Страница не найдена'}
+            return Response(
+                data=context,
+                status=status.HTTP_404_NOT_FOUND
+            )
+        if model == 'shopping_cart':
+            try:
+                shopping_cart = ShoppingList.objects.get(
+                    author=request.user,
+                    recipe=recipe_id
+                )
+            except ShoppingList.DoesNotExist:
+                context = {'error': 'Такого рецепта нет в списке покупок'}
+                return Response(
+                    data=context,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            shopping_cart.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            favorite = Favorites.objects.get(
+                author=request.user,
+                recipe=recipe_id
+            )
+        except Favorites.DoesNotExist:
+            context = {'error': 'Такого рецепта нет в списке избранное'}
+            return Response(
+                data=context,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        favorite.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

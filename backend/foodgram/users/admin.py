@@ -12,7 +12,6 @@ class UserAdmin(UserAdmin):
         'username',
         'first_name',
         'last_name',
-        'is_subscribed',
         'is_active',
         'is_staff',
     )
