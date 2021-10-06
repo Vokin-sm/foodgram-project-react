@@ -14,8 +14,7 @@ from .filters import RecipeFilter
 from .models import Favorites, Recipe, ShoppingList
 from .paginations import RecipeListPagination
 from .permissions import IsOwner
-from .serializers import (RecipesCreateSerializer,
-                          RecipesListSerializer,
+from .serializers import (RecipesCreateSerializer, RecipesListSerializer,
                           ShoppingCartFavoriteSerializer)
 
 

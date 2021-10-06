@@ -1,4 +1,4 @@
-from rest_framework import mixins
+from rest_framework import filters, mixins
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 
@@ -13,3 +13,5 @@ class IngredientViewSet(mixins.ListModelMixin,
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [AllowAny]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']

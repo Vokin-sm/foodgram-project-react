@@ -3,8 +3,9 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from .models import Follow
 from recipes.models import Recipe
+
+from .models import Follow
 
 
 class CustomUserSerializer(UserSerializer):

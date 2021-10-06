@@ -27,7 +27,7 @@ class RecipeFilter(django_filters.FilterSet):
             'tags',
         ]
 
-    def get_is_favorited(self, queryset, name_field, value):
+    def get_is_favorited(self, queryset, name, value):
         if self.request.auth:
             if not value:
                 return queryset
@@ -37,7 +37,7 @@ class RecipeFilter(django_filters.FilterSet):
             return queryset.filter(favorites__in=favorites_recipes)
         return queryset
 
-    def get_is_in_shopping_cart(self, queryset, name_field, value):
+    def get_is_in_shopping_cart(self, queryset, name, value):
         if self.request.auth:
             if not value:
                 return queryset
