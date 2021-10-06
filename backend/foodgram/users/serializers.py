@@ -23,7 +23,11 @@ class CustomUserSerializer(UserSerializer):
         ]
 
     def get_is_subscribed(self, obj):
-        if self.context['request'].auth:
+        try:
+            user_auth = self.context['request'].auth
+        except KeyError:
+            return False
+        if user_auth:
             current_user = self.context['request'].user
             try:
                 Follow.objects.get(author=obj, user=current_user)

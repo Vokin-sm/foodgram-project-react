@@ -34,25 +34,26 @@ class RecipesListSerializer(serializers.ModelSerializer):
             'cooking_time',
         ]
 
-    def get_is_favorited(self, obj):
-        if self.context['request'].auth:
+    def get_true_or_false(self, obj, model):
+        """Gets true or false."""
+        try:
+            user_auth = self.context['request'].auth
+        except KeyError:
+            return False
+        if user_auth:
             current_user = self.context['request'].user
             try:
-                Favorites.objects.get(recipe=obj, author=current_user)
-            except Favorites.DoesNotExist:
+                model.objects.get(recipe=obj, author=current_user)
+            except model.DoesNotExist:
                 return False
             return True
         return False
 
+    def get_is_favorited(self, obj):
+        return self.get_true_or_false(obj, Favorites)
+
     def get_is_in_shopping_cart(self, obj):
-        if self.context['request'].auth:
-            current_user = self.context['request'].user
-            try:
-                ShoppingList.objects.get(recipe=obj, author=current_user)
-            except ShoppingList.DoesNotExist:
-                return False
-            return True
-        return False
+        return self.get_true_or_false(obj, ShoppingList)
 
 
 def tags_and_components_add(obj, tags_data, components_data):
