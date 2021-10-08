@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from ingredients.models import Component
@@ -26,7 +27,10 @@ class Recipe(models.Model):
         max_length=200
     )
     text = models.TextField('текст',)
-    cooking_time = models.PositiveIntegerField('время приготовления',)
+    cooking_time = models.PositiveIntegerField(
+        'время приготовления',
+        validators=[MinValueValidator(1)]
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -43,7 +47,7 @@ class Recipe(models.Model):
 
 
 class ShoppingList(models.Model):
-    """The ShoppingList model is needed to create shopping list"""
+    """The ShoppingList model is needed to create shopping list."""
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

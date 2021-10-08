@@ -41,16 +41,11 @@ class FollowAddDelete(APIView):
                 data=context,
                 status=status.HTTP_400_BAD_REQUEST
             )
-        try:
-            Follow.objects.get(
-                user=current_user,
-                author=author
-            )
-        except Follow.DoesNotExist:
-            follow = Follow.objects.create(
-                user=current_user,
-                author=author
-            )
+        follow, created = Follow.objects.get_or_create(
+            user=current_user,
+            author=author,
+        )
+        if created:
             serializer = FollowSerializer(follow)
             return Response(
                 serializer.data,

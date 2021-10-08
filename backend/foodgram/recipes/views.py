@@ -1,6 +1,9 @@
 from collections import namedtuple
 
 from django.http import HttpResponse
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen.canvas import Canvas
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
@@ -89,15 +92,22 @@ def download_shopping_cart(request):
                 amount = content[component.name.name].amount + component.amount
                 content[component.name.name] = element._replace(amount=amount)
 
-    with open('static/shopping_carts/shopping_cart.txt', 'w') as shopping_cart:
-        for name_ingredient, properties in content.items():
-            shopping_cart.write(
-                f'*  {name_ingredient} ({properties.measurement_unit})'
-                f' ----- {properties.amount}\n'
-            )
+    shopping_cart_pdf = Canvas('static/shopping_carts/shopping_cart.pdf')
+    pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
+    shopping_cart_pdf.setFont('FreeSans', 18)
+    height = 792
+    width = 15
+    for name_ingredient, properties in content.items():
+        shopping_cart_pdf.drawString(
+            width,
+            height,
+            f'*  {name_ingredient} ({properties.measurement_unit}) '
+            f'----- {properties.amount}'
+        )
+        height -= 30
+    shopping_cart_pdf.save()
 
-    with open('static/shopping_carts/shopping_cart.txt') as shopping_cart:
-        return HttpResponse(shopping_cart, content_type='text/plain')
+    return HttpResponse(shopping_cart_pdf, content_type='text/plain')
 
 
 class ShoppingCartsFavorite(APIView):
@@ -116,16 +126,11 @@ class ShoppingCartsFavorite(APIView):
             id=recipe_id
         )
         if model == 'shopping_cart':
-            try:
-                ShoppingList.objects.get(
-                    author=request.user,
-                    recipe=recipe_id
-                )
-            except ShoppingList.DoesNotExist:
-                shopping_cart = ShoppingList.objects.create(
-                    author=request.user,
-                    recipe=recipe
-                )
+            shopping_cart, created = ShoppingList.objects.get_or_create(
+                author=request.user,
+                recipe=recipe,
+            )
+            if created:
                 serializer = ShoppingCartFavoriteSerializer(shopping_cart)
                 return Response(
                     serializer.data,
@@ -136,16 +141,11 @@ class ShoppingCartsFavorite(APIView):
                 data=context,
                 status=status.HTTP_400_BAD_REQUEST
             )
-        try:
-            Favorites.objects.get(
-                author=request.user,
-                recipe=recipe_id
-            )
-        except Favorites.DoesNotExist:
-            favorite = Favorites.objects.create(
-                author=request.user,
-                recipe=recipe
-            )
+        favorite, created = Favorites.objects.get_or_create(
+            author=request.user,
+            recipe=recipe,
+        )
+        if created:
             serializer = ShoppingCartFavoriteSerializer(favorite)
             return Response(
                 serializer.data,

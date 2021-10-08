@@ -4,9 +4,9 @@ from rest_framework.routers import DefaultRouter
 from .views import (RecipesViewSet, ShoppingCartsFavorite,
                     download_shopping_cart)
 
-router = DefaultRouter()
+router_v1 = DefaultRouter()
 
-router.register(
+router_v1.register(
     '',
     RecipesViewSet,
     basename='recipes',
@@ -24,7 +24,7 @@ urlpatterns = [
     ),
     path(
         '',
-        include(router.urls)
+        include(router_v1.urls)
     ),
 
 ]

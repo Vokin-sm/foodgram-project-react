@@ -3,9 +3,13 @@ from rest_framework.routers import DefaultRouter
 
 from .views import IngredientViewSet
 
-router = DefaultRouter()
-router.register('', IngredientViewSet)
+router_v1 = DefaultRouter()
+router_v1.register(
+    '',
+    IngredientViewSet,
+    basename='ingredients'
+)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', include(router_v1.urls)),
 ]

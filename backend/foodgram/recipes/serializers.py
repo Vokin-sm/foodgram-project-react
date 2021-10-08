@@ -64,16 +64,10 @@ def tags_and_components_add(obj, tags_data, components_data):
         ingredient = Ingredient.objects.get(
             id=component_data['name']['id']
         )
-        try:
-            component = Component.objects.get(
-                amount=component_data['amount'],
-                name=ingredient,
-            )
-        except Component.DoesNotExist:
-            component = Component.objects.create(
-                amount=component_data['amount'],
-                name=ingredient,
-            )
+        component, created = Component.objects.get_or_create(
+            amount=component_data['amount'],
+            name=ingredient,
+        )
         obj.ingredients.add(component)
     obj.save()
     return obj

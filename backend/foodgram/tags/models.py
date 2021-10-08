@@ -3,6 +3,11 @@ from django.db import models
 
 class Tag(models.Model):
     """The Tag model is needed to create tag."""
+    COLORS = (
+        ('#E26C2D', 'Оранжевый'),
+        ('#49B64E', 'Зелёный'),
+        ('#8775D2', 'Фиолетовый'),
+    )
     name = models.CharField(
         'имя',
         max_length=200,
@@ -11,6 +16,7 @@ class Tag(models.Model):
     color = models.CharField(
         'цвет',
         max_length=7,
+        choices=COLORS,
         blank=True,
     )
     slug = models.SlugField(

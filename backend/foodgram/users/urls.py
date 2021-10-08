@@ -3,15 +3,15 @@ from rest_framework.routers import DefaultRouter
 
 from .views import CustomUserViewSet, FollowAddDelete, FollowViewSet
 
-router = DefaultRouter()
+router_v1 = DefaultRouter()
 
-router.register(
+router_v1.register(
     'subscriptions',
     FollowViewSet,
     basename='subscriptions'
 )
 
-router.register(
+router_v1.register(
     '',
     CustomUserViewSet
 )
@@ -24,6 +24,6 @@ urlpatterns = [
     ),
     path(
         '',
-        include(router.urls)
+        include(router_v1.urls)
     ),
 ]
