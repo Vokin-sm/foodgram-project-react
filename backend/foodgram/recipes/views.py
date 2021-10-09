@@ -107,7 +107,10 @@ def download_shopping_cart(request):
         height -= 30
     shopping_cart_pdf.save()
 
-    return HttpResponse(shopping_cart_pdf, content_type='text/plain')
+    with open('static/shopping_carts/shopping_cart.pdf', 'rb') as file_pdf:
+        response = HttpResponse(file_pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'filename=shopping_cart.pdf'
+        return response
 
 
 class ShoppingCartsFavorite(APIView):
