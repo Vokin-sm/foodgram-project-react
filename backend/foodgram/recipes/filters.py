@@ -6,10 +6,10 @@ from tags.models import Tag
 
 class RecipeFilter(django_filters.FilterSet):
     """Recipes Filter"""
-    is_favorited = django_filters.NumberFilter(
+    is_favorited = django_filters.BooleanFilter(
         method='get_is_favorited'
     )
-    is_in_shopping_cart = django_filters.NumberFilter(
+    is_in_shopping_cart = django_filters.BooleanFilter(
         method='get_is_in_shopping_cart'
     )
     tags = django_filters.ModelMultipleChoiceFilter(
