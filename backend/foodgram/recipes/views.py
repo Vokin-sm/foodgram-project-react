@@ -108,7 +108,7 @@ def download_shopping_cart(request):
     shopping_cart_pdf.save()
 
     with open('static/shopping_carts/shopping_cart.pdf', 'rb') as file_pdf:
-        response = HttpResponse(file_pdf, content_type='application/pdf')
+        response = HttpResponse(file_pdf.read(), content_type='application/pdf')
         response['Content-Disposition'] = 'filename=shopping_cart.pdf'
         return response
 
