@@ -64,6 +64,8 @@ jobs:
             sudo docker pull vokin89/foodgram-backend:latest
             sudo docker-compose stop
             sudo docker-compose rm backend
+            # Удалит старый файл для переменных окружения
+            rm .env
             # Создаст файл для переменных окружения
             touch .env
             # Наполнит файл переменными окружения из секретов GitHub
