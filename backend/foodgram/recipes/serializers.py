@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
@@ -59,7 +60,8 @@ class RecipesListSerializer(serializers.ModelSerializer):
 def components_add(obj, components_data):
     """Adds components to an object."""
     for component_data in components_data:
-        ingredient = Ingredient.objects.get(
+        ingredient = get_object_or_404(
+            Ingredient,
             id=component_data['name']['id']
         )
         component, created = Component.objects.get_or_create(
@@ -99,6 +101,7 @@ class RecipesCreateSerializer(serializers.ModelSerializer):
         tags_data = validated_data.pop('tags')
         instance.tags.set(tags_data)
         components_data = validated_data.pop('ingredients')
+        instance.ingredients.clear()
         if components_data:
             components_add(instance, components_data)
         for update_data in validated_data:
