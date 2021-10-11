@@ -99,9 +99,9 @@ class RecipesCreateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         tags_data = validated_data.pop('tags')
         instance.tags.set(tags_data)
-        if 'ingredients' in self.initial_data:
-            components_data = validated_data.pop('ingredients')
-            components_add(instance, components_data)
+        components_data = validated_data.pop('ingredients')
+        instance.ingredients.clear()
+        components_add(instance, components_data)
         for update_data in validated_data:
             setattr(instance, update_data, validated_data[update_data])
         instance.save()
