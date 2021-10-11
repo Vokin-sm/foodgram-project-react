@@ -1,5 +1,6 @@
 from collections import namedtuple
 
+from django.core.files import File
 from django.http import HttpResponse
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -107,12 +108,13 @@ def download_shopping_cart(request):
         height -= 30
     shopping_cart_pdf.save()
 
-    with open('static/shopping_carts/shopping_cart.pdf', 'rb') as file_pdf:
+    with open('static/shopping_carts/shopping_cart.pdf', 'rb') as file:
+        file_pdf = File(file)
         response = HttpResponse(
             file_pdf.read(),
             content_type='application/pdf'
         )
-        response['Content-Disposition'] = 'filename=shopping_cart.pdf'
+        response['Content-Disposition'] = 'attachment'
         return response
 
 
