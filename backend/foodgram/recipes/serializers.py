@@ -56,10 +56,8 @@ class RecipesListSerializer(serializers.ModelSerializer):
         return self.get_true_or_false(obj, ShoppingList)
 
 
-def tags_and_components_add(obj, tags_data, components_data):
-    """Adds tags and components to an object."""
-    for tag_data in tags_data:
-        obj.tags.add(tag_data)
+def components_add(obj, components_data):
+    """Adds components to an object."""
     for component_data in components_data:
         ingredient = Ingredient.objects.get(
             id=component_data['name']['id']
@@ -69,7 +67,6 @@ def tags_and_components_add(obj, tags_data, components_data):
             name=ingredient,
         )
         obj.ingredients.add(component)
-    obj.save()
     return obj
 
 
@@ -93,15 +90,22 @@ class RecipesCreateSerializer(serializers.ModelSerializer):
         tags_data = validated_data.pop('tags')
         components_data = validated_data.pop('ingredients')
         recipe = Recipe.objects.create(**validated_data)
-        return tags_and_components_add(recipe, tags_data, components_data)
+        recipe.tags.set(tags_data)
+        components_add(recipe, components_data)
+        recipe.save()
+        return recipe
 
     def update(self, instance, validated_data):
         tags_data = validated_data.pop('tags')
-        instance.tags.clear()
-        components_data = validated_data.pop('ingredients')
+        instance.tags.set(tags_data)
+        if 'ingredients' in self.initial_data:
+            components_data = validated_data.pop('ingredients')
+            instance.ingredients.clear()
+            components_add(instance, components_data)
         for update_data in validated_data:
             setattr(instance, update_data, validated_data[update_data])
-        return tags_and_components_add(instance, tags_data, components_data)
+        instance.save()
+        return instance
 
 
 class ShoppingCartFavoriteSerializer(serializers.ModelSerializer):
