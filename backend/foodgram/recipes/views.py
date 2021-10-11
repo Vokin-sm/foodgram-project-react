@@ -1,6 +1,5 @@
 from collections import namedtuple
 
-from django.core.files import File
 from django.http import HttpResponse
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -93,10 +92,15 @@ def download_shopping_cart(request):
                 amount = content[component.name.name].amount + component.amount
                 content[component.name.name] = element._replace(amount=amount)
 
-    shopping_cart_pdf = Canvas('static/shopping_carts/shopping_cart.pdf')
+    file_name = 'Список ингредиентов'
+    file_title = 'Необходимый список ингредиентов'
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{file_name}.pdf"'
+    shopping_cart_pdf = Canvas(response)
+    shopping_cart_pdf.setTitle(file_title)
     pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
     shopping_cart_pdf.setFont('FreeSans', 18)
-    height = 792
+    height = 762
     width = 15
     for name_ingredient, properties in content.items():
         shopping_cart_pdf.drawString(
@@ -106,16 +110,9 @@ def download_shopping_cart(request):
             f'----- {properties.amount}'
         )
         height -= 30
+    shopping_cart_pdf.showPage()
     shopping_cart_pdf.save()
-
-    with open('static/shopping_carts/shopping_cart.pdf', 'rb') as file:
-        file_pdf = File(file)
-        response = HttpResponse(
-            file_pdf.read(),
-            content_type='application/pdf'
-        )
-        response['Content-Disposition'] = 'attachment'
-        return response
+    return response
 
 
 class ShoppingCartsFavorite(APIView):
