@@ -100,7 +100,6 @@ class RecipesCreateSerializer(serializers.ModelSerializer):
         instance.tags.set(tags_data)
         components_data = validated_data.pop('ingredients')
         if components_data:
-            instance.ingredients.clear()
             components_add(instance, components_data)
         for update_data in validated_data:
             setattr(instance, update_data, validated_data[update_data])
