@@ -65,7 +65,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         return [permission() for permission in self.permission_classes]
 
     def get_serializer_class(self):
-        if self.action in ['create', 'update']:
+        if self.action in ['create', 'update', 'partial_update']:
             return RecipesCreateSerializer
         return self.serializer_class
 
