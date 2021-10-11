@@ -66,7 +66,8 @@ def components_add(obj, components_data):
             amount=component_data['amount'],
             name=ingredient,
         )
-        obj.ingredients.add(component)
+        if component not in Component.objects.filter(recipe=obj):
+            obj.ingredients.add(component)
     return obj
 
 
@@ -100,7 +101,6 @@ class RecipesCreateSerializer(serializers.ModelSerializer):
         instance.tags.set(tags_data)
         if 'ingredients' in self.initial_data:
             components_data = validated_data.pop('ingredients')
-            instance.ingredients.clear()
             components_add(instance, components_data)
         for update_data in validated_data:
             setattr(instance, update_data, validated_data[update_data])
