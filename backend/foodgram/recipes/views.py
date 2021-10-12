@@ -43,6 +43,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        print(request.data)
         serializer = self.get_serializer(
             instance,
             data=request.data,

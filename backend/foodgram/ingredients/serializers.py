@@ -11,6 +11,7 @@ class ComponentListSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.ReadOnlyField(
         source='name.measurement_unit'
     )
+    id = serializers.ReadOnlyField(source='name.id')
 
     class Meta:
         model = Component
