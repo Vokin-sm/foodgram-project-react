@@ -1,7 +1,6 @@
-import io
 from collections import namedtuple
 
-from django.http import FileResponse
+from django.http import HttpResponse
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen.canvas import Canvas
@@ -94,13 +93,11 @@ def download_shopping_cart(request):
                 amount = content[component.name.name].amount + component.amount
                 content[component.name.name] = element._replace(amount=amount)
 
-    buffer = io.BytesIO()
-    # file_name = 'Список ингредиентов'
+    file_name = 'Список ингредиентов'
     file_title = 'Необходимый список ингредиентов'
-    # response = HttpResponse(content_type='application/pdf')
-    # response['Content-Disposition'] =
-    # f'attachment; filename="{file_name}.pdf"'
-    shopping_cart_pdf = Canvas(buffer)
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{file_name}.pdf"'
+    shopping_cart_pdf = Canvas(response)
     shopping_cart_pdf.setTitle(file_title)
     pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
     shopping_cart_pdf.setFont('FreeSans', 18)
@@ -116,12 +113,7 @@ def download_shopping_cart(request):
         height -= 30
     shopping_cart_pdf.showPage()
     shopping_cart_pdf.save()
-    buffer.seek(0)
-    return FileResponse(
-        buffer,
-        as_attachment=True,
-        filename='shopping_cart.pdf'
-    )
+    return response
 
 
 class ShoppingCartsFavorite(APIView):
