@@ -1,9 +1,9 @@
 from collections import namedtuple
 
 from django.http import HttpResponse
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfgen.canvas import Canvas
+# from reportlab.pdfbase import pdfmetrics
+# from reportlab.pdfbase.ttfonts import TTFont
+# from reportlab.pdfgen.canvas import Canvas
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
@@ -96,7 +96,8 @@ def download_shopping_cart(request):
     # file_name = 'Список ингредиентов'
     # file_title = 'Необходимый список ингредиентов'
     # response = HttpResponse(content_type='application/pdf')
-    # response['Content-Disposition'] = f'attachment; filename="{file_name}.pdf"'
+    # response['Content-Disposition'] =
+    # f'attachment; filename="{file_name}.pdf"'
     # shopping_cart_pdf = Canvas(response)
     # shopping_cart_pdf.setTitle(file_title)
     # pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
