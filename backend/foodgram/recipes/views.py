@@ -115,9 +115,11 @@ def download_shopping_cart(request):
     # shopping_cart_pdf.showPage()
     # shopping_cart_pdf.save()
     with open('static/shopping_carts/shopping_cart.txt', 'w') as f:
-        f.write('Проверка связи')
+        f.write('Проверка связи!!!!!!!')
     with open('static/shopping_carts/shopping_cart.txt', 'r') as f:
-        return HttpResponse(f, content_type='text/plain')
+        response = HttpResponse(f, content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename=f.txt'
+        return response
 
 
 class ShoppingCartsFavorite(APIView):
