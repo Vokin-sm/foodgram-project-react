@@ -1,9 +1,9 @@
 from collections import namedtuple
 
 from django.http import HttpResponse
-# from reportlab.pdfbase import pdfmetrics
-# from reportlab.pdfbase.ttfonts import TTFont
-# from reportlab.pdfgen.canvas import Canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen.canvas import Canvas
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
@@ -93,33 +93,27 @@ def download_shopping_cart(request):
                 amount = content[component.name.name].amount + component.amount
                 content[component.name.name] = element._replace(amount=amount)
 
-    # file_name = 'Список ингредиентов'
-    # file_title = 'Необходимый список ингредиентов'
-    # response = HttpResponse(content_type='application/pdf')
-    # response['Content-Disposition'] =
-    # f'attachment; filename="{file_name}.pdf"'
-    # shopping_cart_pdf = Canvas(response)
-    # shopping_cart_pdf.setTitle(file_title)
-    # pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
-    # shopping_cart_pdf.setFont('FreeSans', 18)
-    # height = 762
-    # width = 15
-    # for name_ingredient, properties in content.items():
-    #     shopping_cart_pdf.drawString(
-    #         width,
-    #         height,
-    #         f'*  {name_ingredient} ({properties.measurement_unit}) '
-    #         f'----- {properties.amount}'
-    #     )
-    #     height -= 30
-    # shopping_cart_pdf.showPage()
-    # shopping_cart_pdf.save()
-    with open('static/shopping_carts/shopping_cart.txt', 'w') as f:
-        f.write('Проверка связи!!!!!!!')
-    with open('static/shopping_carts/shopping_cart.txt', 'r') as f:
-        response = HttpResponse(f, content_type='text/plain')
-        response['Content-Disposition'] = 'attachment; filename=f.txt'
-        return response
+    file_name = 'Список ингредиентов'
+    file_title = 'Необходимый список ингредиентов'
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{file_name}.pdf"'
+    shopping_cart_pdf = Canvas(response)
+    shopping_cart_pdf.setTitle(file_title)
+    pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
+    shopping_cart_pdf.setFont('FreeSans', 18)
+    height = 762
+    width = 15
+    for name_ingredient, properties in content.items():
+        shopping_cart_pdf.drawString(
+            width,
+            height,
+            f'*  {name_ingredient} ({properties.measurement_unit}) '
+            f'----- {properties.amount}'
+        )
+        height -= 30
+    shopping_cart_pdf.showPage()
+    shopping_cart_pdf.save()
+    return response
 
 
 class ShoppingCartsFavorite(APIView):
