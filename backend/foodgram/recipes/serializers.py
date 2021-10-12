@@ -60,13 +60,9 @@ class RecipesListSerializer(serializers.ModelSerializer):
 def components_add(obj, components_data):
     """Adds components to an object."""
     for component_data in components_data:
-        ingredient = get_object_or_404(
-            Ingredient,
-            id=component_data['name']['id']
-        )
         component, created = Component.objects.get_or_create(
             amount=component_data['amount'],
-            name=ingredient,
+            name=component_data['id'],
         )
         obj.ingredients.add(component)
     return obj
@@ -102,8 +98,7 @@ class RecipesCreateSerializer(serializers.ModelSerializer):
         instance.tags.set(tags_data)
         components_data = validated_data.pop('ingredients')
         instance.ingredients.clear()
-        if components_data:
-            components_add(instance, components_data)
+        components_add(instance, components_data)
         for update_data in validated_data:
             setattr(instance, update_data, validated_data[update_data])
         instance.save()

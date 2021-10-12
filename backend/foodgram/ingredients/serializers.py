@@ -24,7 +24,10 @@ class ComponentListSerializer(serializers.ModelSerializer):
 
 class ComponentCreateSerializer(serializers.ModelSerializer):
     """Used to serialize component creation."""
-    id = serializers.SlugField(source='name.id')
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all()
+    )
+    amount = serializers.IntegerField()
 
     class Meta:
         model = Component
