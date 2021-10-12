@@ -1,8 +1,7 @@
-from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from ingredients.models import Component, Ingredient
+from ingredients.models import Component
 from ingredients.serializers import (ComponentCreateSerializer,
                                      ComponentListSerializer)
 from tags.serializers import TagsSerializer
