@@ -71,7 +71,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         return self.serializer_class
 
 
-@api_view()
+@api_view(['GET'])
 # @permission_classes([IsAuthenticated])
 def download_shopping_cart(request):
     content = dict()
